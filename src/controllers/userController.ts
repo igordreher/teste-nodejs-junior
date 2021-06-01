@@ -62,11 +62,23 @@ export default {
         }
     },
 
-    delete: async (req: Request, res: Response) => {
+    delete: async (req: Request, res: Response, next: NextFunction) => {
+        const { user_id } = req.params;
 
+        try {
+            await User.deleteOne({ _id: user_id });
+            res.status(200).json();
+        } catch (error) {
+            next(error);
+        }
     },
 
-    deleteAll: async (req: Request, res: Response) => {
-
+    deleteAll: async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            await User.deleteMany();
+            res.status(200).json();
+        } catch (error) {
+            next(error);
+        }
     },
 };
