@@ -8,12 +8,12 @@
     "test": "jest"
   },
   "dependencies": {
-    "@types/express": "^4.17.12",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "mongoose": "^5.12.12"
   },
   "devDependencies": {
+    "@types/express": "^4.17.12",
     "@types/jest": "^26.0.23",
     "@types/node": "^15.6.1",
     "@types/supertest": "^2.0.11",
