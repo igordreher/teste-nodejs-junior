@@ -1,6 +1,20 @@
 version: "3"
 
 services:
+    app:
+        build: .
+        container_name: test-junior
+        ports:
+            - 3000:3000
+        volumes:
+            - ./src/:/usr/app/src
+            - ./__tests__/:/usr/app/__tests__
+        depends_on:
+            - mongo
+            - mongo-test
+        environment:
+            - DB_URL=mongodb://mongo:27017/dev
+
     mongo:
         image: mongo
         container_name: test-junior-mongo
