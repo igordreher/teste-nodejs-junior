@@ -12,9 +12,11 @@ describe('User Get', () => {
     it('Should get all users', async () => {
         const res = await get();
         expect(res.statusCode).toBe(200);
+        expect((await mongoose.model('User').find()).length).toBe(0);
     });
 
-    afterAll(() => {
-        return mongoose.disconnect();
+    afterAll(async () => {
+        await mongoose.connection.db.dropDatabase();
+        await mongoose.disconnect();
     });
 });

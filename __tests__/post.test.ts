@@ -12,9 +12,10 @@ describe('User Post', () => {
     it('Should create a user', async () => {
         const res = await post({ email: 'user@email.com', password: 'pass' });
         expect(res.statusCode).toBe(201);
+        expect((await mongoose.model('User').find()).length).toBe(1);
     });
 
-    it('Should fail to create user without data', async () => {
+    it('Should fail to create user with invalid data', async () => {
         let res = await post({ email: 'user@email' });
         expect(res.statusCode).toBe(400);
 
@@ -25,7 +26,8 @@ describe('User Post', () => {
         expect(res.statusCode).toBe(400);
     });
 
-    afterAll(() => {
-        return mongoose.disconnect();
+    afterAll(async () => {
+        await mongoose.connection.db.dropDatabase();
+        await mongoose.disconnect();
     });
 });
