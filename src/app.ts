@@ -12,7 +12,7 @@ app.use(routes);
 
 app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
     if (error instanceof ValidationError)
-        return res.status(400).json(error);
+        return res.status(400).json(error.errors);
 
     return res.status(500).json(error);
 });

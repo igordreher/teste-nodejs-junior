@@ -27,7 +27,7 @@ describe('User Put', () => {
 
     it('Should update a user data', async () => {
         const res = await put(seedUser._id, { email: 'new_email@email.com' });
-        expect(res.statusCode).toBe(200);
+        expect(res.statusCode).toBe(204);
 
         const user = await User.findOne({ _id: seedUser._id }) as any;
         expect(user?.email).toBe('new_email@email.com');

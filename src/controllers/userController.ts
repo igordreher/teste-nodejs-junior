@@ -55,8 +55,8 @@ export default {
 
         try {
             await schema.validate({ email, password });
-            const user = await User.updateOne({ _id: user_id }, { email, password });
-            res.status(200).json(user);
+            await User.updateOne({ _id: user_id }, { email, password });
+            res.status(204).json();
         } catch (error) {
             next(error);
         }
