@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import User from 'models/user';
 import * as yup from 'yup';
+import { ValidationError } from "yup";
 
 
 export default {
@@ -34,15 +35,31 @@ export default {
         try {
             await schema.validate({ email, password });
             const user = await User.create({ email, password });
-            console.log(user);
             res.status(201).json(user);
         } catch (error) {
             next(error);
         }
     },
 
-    update: async (req: Request, res: Response) => {
+    update: async (req: Request, res: Response, next: NextFunction) => {
+        const { email, password } = req.body;
+        const { user_id } = req.params;
 
+        if (!(email || password))
+            return next(new ValidationError('Email or password required to update'));
+
+        const schema = yup.object().shape({
+            email: yup.string().email(),
+            password: yup.string()
+        });
+
+        try {
+            await schema.validate({ email, password });
+            const user = await User.updateOne({ _id: user_id }, { email, password });
+            res.status(200).json(user);
+        } catch (error) {
+            next(error);
+        }
     },
 
     delete: async (req: Request, res: Response) => {
