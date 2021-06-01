@@ -1,7 +1,14 @@
+require('dotenv');
 import mongoose from 'mongoose';
 import request from 'supertest';
 import app from 'app';
 
+jest.mock('../src/mongo', () => {
+    return () => {
+        const db_url = process.env.DB_URL + 'post';
+        mongoose.connect(db_url, { useNewUrlParser: true, useUnifiedTopology: true });
+    };
+});
 
 describe('User Post', () => {
 
