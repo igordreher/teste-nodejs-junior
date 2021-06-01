@@ -1,5 +1,6 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import User from 'models/user';
+import * as yup from 'yup';
 
 
 export default {
@@ -12,14 +13,19 @@ export default {
 
     },
 
-    create: async (req: Request, res: Response) => {
+    create: async (req: Request, res: Response, next: NextFunction) => {
+        const { email, password } = req.body;
+        const schema = yup.object().shape({
+            email: yup.string().email().required(),
+            password: yup.string().required()
+        });
+
         try {
-            const { email, password } = req.body;
+            await schema.validate({ email, password });
             const user = await User.create({ email, password });
             res.status(201).json(user);
         } catch (error) {
-            console.log(error);
-            res.status(500).send();
+            next(error);
         }
     },
 
