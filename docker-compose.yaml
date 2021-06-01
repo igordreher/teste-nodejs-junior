@@ -9,7 +9,18 @@ services:
         volumes:
             - data:/data/db
         environment:
+            - MONGO_INITDB_DATABASE=dev
+
+    mongo-test:
+        image: mongo
+        container_name: test-junior-mongo-test
+        ports:
+            - 27018:27017
+        environment:
             - MONGO_INITDB_DATABASE=test
+        volumes:
+            - data-test:/data/db
 
 volumes:
     data:
+    data-test:
