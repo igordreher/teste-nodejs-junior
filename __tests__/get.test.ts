@@ -10,12 +10,14 @@ jest.mock('../src/mongo', () => {
 });
 
 describe('User Get', () => {
+    const User = mongoose.model('User');
+
     beforeAll(async () => {
         const user = {
             email: 'user@email.com',
             password: 'password'
         };
-        await mongoose.model('User').insertMany([user, user, user]);
+        await User.insertMany([user, user, user]);
     });
 
     const post = async (data: any) => {
@@ -25,7 +27,7 @@ describe('User Get', () => {
     it('Should get all users', async () => {
         const res = await request(app).get('/api/v1/users');
         expect(res.statusCode).toBe(200);
-        expect((await mongoose.model('User').find()).length).toBe(3);
+        expect((await User.find()).length).toBe(3);
     });
 
     it('Should get a specific user', async () => {

@@ -9,19 +9,16 @@ jest.mock('../src/mongo', () => {
     };
 });
 
-interface User {
-    email: string;
-    password: string;
-}
-
 describe('User Put', () => {
+    const User = mongoose.model('User');
     let seedUser: any;
+
     beforeAll(async () => {
         const user = {
             email: 'user@email.com',
             password: 'password'
         };
-        seedUser = await mongoose.model('User').create(user);
+        seedUser = await User.create(user);
     });
 
     const put = async (id: string, data: any) => {
@@ -32,7 +29,7 @@ describe('User Put', () => {
         const res = await put(seedUser._id, { email: 'new_email@email.com' });
         expect(res.statusCode).toBe(200);
 
-        const user = await mongoose.model<User>('User').findOne({ _id: seedUser._id });
+        const user = await User.findOne({ _id: seedUser._id }) as any;
         expect(user?.email).toBe('new_email@email.com');
     });
 
