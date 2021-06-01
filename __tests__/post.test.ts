@@ -1,8 +1,7 @@
+import mongoose from 'mongoose';
 import request from 'supertest';
 import app from 'app';
 
-jest.mock('../src/models/user');
-jest.mock('../src/mongo');
 
 describe('User Post', () => {
 
@@ -11,7 +10,7 @@ describe('User Post', () => {
     };
 
     it('Should create a user', async () => {
-        const res = await post({ email: 'user@email', password: 'pass' });
+        const res = await post({ email: 'user@email.com', password: 'pass' });
         expect(res.statusCode).toBe(201);
     });
 
@@ -26,4 +25,7 @@ describe('User Post', () => {
         expect(res.statusCode).toBe(400);
     });
 
+    afterAll(() => {
+        return mongoose.disconnect();
+    });
 });
