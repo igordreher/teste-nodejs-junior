@@ -65,6 +65,11 @@ describe('User Put', () => {
         expect(res.statusCode).toBe(400);
     });
 
+    it('Should create if not exists', async () => {
+        const res = await put('000000000000', { email: 'email@email.com', password: 'pass' });
+        expect(res.statusCode).toBe(201);
+    });
+
     afterAll(async () => {
         await mongoose.connection.db.dropDatabase();
         await mongoose.disconnect();

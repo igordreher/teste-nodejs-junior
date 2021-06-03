@@ -42,8 +42,14 @@ export default {
         validateIdType(user_id);
         await validateUserData({ email, password, user_id });
 
-        await User.replaceOne({ _id: user_id }, { email, password });
-        res.status(204).json();
+        const user = await User.findOneAndReplace(
+            { _id: user_id }, { email, password }, { upsert: true }
+        );
+
+        if (user)
+            res.status(204).json();
+        else
+            res.status(201).json();
     },
 
     delete: async (req: Request, res: Response) => {
