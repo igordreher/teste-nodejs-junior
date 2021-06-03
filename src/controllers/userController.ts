@@ -28,36 +28,21 @@ export default {
 
     create: async (req: Request, res: Response) => {
         const { email, password } = req.body;
-        const schema = yup.object().shape({
-            email: yup.string().email().required(),
-            password: yup.string().required()
-        });
 
-        await schema.validate({ email, password });
-        await validateNoExistingEmail(email);
+        await validateUserData({ email, password });
 
         const user = await User.create({ email, password });
         res.status(201).json(view.render(user));
     },
 
-    update: async (req: Request, res: Response) => {
+    replace: async (req: Request, res: Response) => {
         const { email, password } = req.body;
         const { user_id } = req.params;
 
-        if (!(email || password))
-            throw new ValidationError('Email or password required to update');
-
-        const schema = yup.object().shape({
-            email: yup.string().email(),
-            password: yup.string()
-        });
-
         validateIdType(user_id);
-        await schema.validate({ email, password });
-        await validateExistingUser(user_id);
-        await validateNoExistingEmail(email);
+        await validateUserData({ email, password, user_id });
 
-        await User.updateOne({ _id: user_id }, { email, password });
+        await User.replaceOne({ _id: user_id }, { email, password });
         res.status(204).json();
     },
 
@@ -75,19 +60,26 @@ export default {
     },
 };
 
-async function validateNoExistingEmail(email: string) {
-    const user = await User.findOne({ email });
-    if (user)
-        throw new ValidationError('Invalid email: already used');
+interface User {
+    email: string;
+    password: string;
+    user_id?: string;
 }
+
 
 function validateIdType(id: string) {
     if (!Types.ObjectId.isValid(id))
         throw new ValidationError('Invalid ID: should be 24 hex string');
 }
 
-async function validateExistingUser(id: string) {
-    const user = await User.findOne({ _id: id });
-    if (!user)
-        throw new AppError('User not found', 404);
+async function validateUserData({ email, password, user_id }: User) {
+    const schema = yup.object().shape({
+        email: yup.string().email().required(),
+        password: yup.string().required()
+    });
+    await schema.validate({ email, password }, { abortEarly: false });
+
+    const user = await User.findOne({ _id: { $ne: user_id }, email });
+    if (user)
+        throw new ValidationError('Invalid email: already used');
 }
