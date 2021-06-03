@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import User from 'models/user';
-import view from 'views/user';
+import User from 'models/userModel';
+import view from 'views/userView';
 import * as yup from 'yup';
 import { ValidationError } from 'yup';
 import { Types } from 'mongoose';
