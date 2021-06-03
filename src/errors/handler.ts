@@ -1,10 +1,10 @@
-import { ErrorRequestHandler } from 'express';
+import { ErrorRequestHandler, RequestHandler } from 'express';
 import { ValidationError } from 'yup';
 import AppError from 'errors/AppError';
 
 const errorHandler: ErrorRequestHandler = (error, req, res, next) => {
     if (error instanceof AppError)
-        return res.status(error.status).json({ error: error.message });
+        return res.status(error.status).json(error.message);
 
     if (error instanceof ValidationError)
         return res.status(400).json(error.errors);
@@ -13,4 +13,8 @@ const errorHandler: ErrorRequestHandler = (error, req, res, next) => {
     return res.status(500).json(error);
 };
 
-export default errorHandler;
+const notFoundHandler: RequestHandler = (req, res) => {
+    res.status(404).json('Resource not found');
+};
+
+export default [errorHandler, notFoundHandler];
