@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import User from 'models/user';
+import view from 'views/user';
 import * as yup from 'yup';
 import { ValidationError } from 'yup';
 import { Types } from 'mongoose';
@@ -10,17 +11,19 @@ export default {
 
     list: async (req: Request, res: Response) => {
         const users = await User.find();
-        res.status(200).json(users);
+        res.status(200).json(view.renderMany(users));
     },
 
     find: async (req: Request, res: Response) => {
         const { user_id } = req.params;
 
         validateIdType(user_id);
-        await validateExistingUser(user_id);
 
         const user = await User.findOne({ _id: user_id });
-        res.status(200).json(user);
+        if (!user)
+            throw new AppError('User not found', 404);
+
+        res.status(200).json(view.render(user));
     },
 
     create: async (req: Request, res: Response) => {
@@ -33,8 +36,8 @@ export default {
         await schema.validate({ email, password });
         await validateNoExistingEmail(email);
 
-        const newUser = await User.create({ email, password });
-        res.status(201).json(newUser);
+        const user = await User.create({ email, password });
+        res.status(201).json(view.render(user));
     },
 
     update: async (req: Request, res: Response) => {

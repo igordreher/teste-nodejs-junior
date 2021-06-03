@@ -33,7 +33,7 @@ describe('User Get', () => {
     it('Should get a specific user', async () => {
         const res = await post({ email: 'email@email.com', password: 'pass' });
         const user = res.body;
-        const resGet = await request(app).get(`/api/v1/users/${user._id}`);
+        const resGet = await request(app).get(`/api/v1/users/${user.id}`);
 
         expect(resGet.statusCode).toBe(200);
         expect(resGet.body).toStrictEqual(user);
