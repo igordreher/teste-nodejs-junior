@@ -44,6 +44,11 @@ describe('User Delete', () => {
         expect(res.statusCode).toBe(200);
     });
 
+    it('Should return 400 to invalid id', async () => {
+        const res = await request(app).del('/api/v1/users/invalidId');
+        expect(res.statusCode).toBe(400);
+    });
+
     afterAll(async () => {
         await mongoose.connection.db.dropDatabase();
         await mongoose.disconnect();

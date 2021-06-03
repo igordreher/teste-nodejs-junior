@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import User from 'models/user';
 import * as yup from 'yup';
 import { ValidationError } from "yup";
+import { Types } from 'mongoose';
 
 
 export default {
@@ -13,6 +14,8 @@ export default {
 
     find: async (req: Request, res: Response) => {
         const { user_id } = req.params;
+        validateIdType(user_id);
+
         const user = await User.findOne({ _id: user_id });
         res.status(200).json(user);
     },
@@ -25,7 +28,7 @@ export default {
         });
 
         await schema.validate({ email, password });
-        await findExistingEmail(email);
+        await validateNoExistingEmail(email);
 
         const newUser = await User.create({ email, password });
         res.status(201).json(newUser);
@@ -43,8 +46,9 @@ export default {
             password: yup.string()
         });
 
+        validateIdType(user_id);
         await schema.validate({ email, password });
-        await findExistingEmail(email);
+        await validateNoExistingEmail(email);
 
         await User.updateOne({ _id: user_id }, { email, password });
         res.status(204).json();
@@ -52,6 +56,7 @@ export default {
 
     delete: async (req: Request, res: Response) => {
         const { user_id } = req.params;
+        validateIdType(user_id);
 
         await User.deleteOne({ _id: user_id });
         res.status(200).json();
@@ -63,8 +68,13 @@ export default {
     },
 };
 
-async function findExistingEmail(email: string) {
+async function validateNoExistingEmail(email: string) {
     const user = await User.findOne({ email });
     if (user)
         throw new ValidationError('Invalid email: already used');
+}
+
+function validateIdType(id: string) {
+    if (!Types.ObjectId.isValid(id))
+        throw new ValidationError('Invalid ID: should be 24 hex string');
 }

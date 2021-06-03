@@ -51,6 +51,11 @@ describe('User Put', () => {
         expect(res.body).toEqual(['Invalid email: already used']);
     });
 
+    it('Should return 400 to invalid id', async () => {
+        const res = await put('invalidId', { email: 'email@email.com', password: 'pass' });
+        expect(res.statusCode).toBe(400);
+    });
+
     afterAll(async () => {
         await mongoose.connection.db.dropDatabase();
         await mongoose.disconnect();

@@ -39,6 +39,11 @@ describe('User Get', () => {
         expect(resGet.body).toStrictEqual(user);
     });
 
+    it('Should return 400 to invalid id', async () => {
+        const res = await request(app).get('/api/v1/users/invalidId');
+        expect(res.statusCode).toBe(400);
+    });
+
     afterAll(async () => {
         await mongoose.connection.db.dropDatabase();
         await mongoose.disconnect();
