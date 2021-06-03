@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response } from "express";
 import User from 'models/user';
 import * as yup from 'yup';
 import { ValidationError } from "yup";
@@ -6,79 +6,55 @@ import { ValidationError } from "yup";
 
 export default {
 
-    list: async (req: Request, res: Response, next: NextFunction) => {
-        try {
-            const users = await User.find();
-            res.status(200).json(users);
-        } catch (error) {
-            next(error);
-        }
+    list: async (req: Request, res: Response) => {
+        const users = await User.find();
+        res.status(200).json(users);
     },
 
-    find: async (req: Request, res: Response, next: NextFunction) => {
+    find: async (req: Request, res: Response) => {
         const { user_id } = req.params;
-        try {
-            const user = await User.findOne({ _id: user_id });
-            res.status(200).json(user);
-        } catch (error) {
-            next(error);
-        }
+        const user = await User.findOne({ _id: user_id });
+        res.status(200).json(user);
     },
 
-    create: async (req: Request, res: Response, next: NextFunction) => {
+    create: async (req: Request, res: Response) => {
         const { email, password } = req.body;
         const schema = yup.object().shape({
             email: yup.string().email().required(),
             password: yup.string().required()
         });
 
-        try {
-            await schema.validate({ email, password });
-            const user = await User.create({ email, password });
-            res.status(201).json(user);
-        } catch (error) {
-            next(error);
-        }
+        await schema.validate({ email, password });
+        const user = await User.create({ email, password });
+        res.status(201).json(user);
     },
 
-    update: async (req: Request, res: Response, next: NextFunction) => {
+    update: async (req: Request, res: Response) => {
         const { email, password } = req.body;
         const { user_id } = req.params;
 
         if (!(email || password))
-            return next(new ValidationError('Email or password required to update'));
+            throw new ValidationError('Email or password required to update');
 
         const schema = yup.object().shape({
             email: yup.string().email(),
             password: yup.string()
         });
 
-        try {
-            await schema.validate({ email, password });
-            await User.updateOne({ _id: user_id }, { email, password });
-            res.status(204).json();
-        } catch (error) {
-            next(error);
-        }
+        await schema.validate({ email, password });
+        await User.updateOne({ _id: user_id }, { email, password });
+        res.status(204).json();
     },
 
-    delete: async (req: Request, res: Response, next: NextFunction) => {
+    delete: async (req: Request, res: Response) => {
         const { user_id } = req.params;
 
-        try {
-            await User.deleteOne({ _id: user_id });
-            res.status(200).json();
-        } catch (error) {
-            next(error);
-        }
+        await User.deleteOne({ _id: user_id });
+        res.status(200).json();
     },
 
-    deleteAll: async (req: Request, res: Response, next: NextFunction) => {
-        try {
-            await User.deleteMany();
-            res.status(200).json();
-        } catch (error) {
-            next(error);
-        }
+    deleteAll: async (req: Request, res: Response) => {
+        await User.deleteMany();
+        res.status(200).json();
     },
 };
