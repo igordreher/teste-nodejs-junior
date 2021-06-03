@@ -56,6 +56,11 @@ describe('User Put', () => {
         expect(res.statusCode).toBe(400);
     });
 
+    it('Should return 404 to not existing user', async () => {
+        const res = await put('000000000000', { email: 'newEmail@email.com', password: 'pass' });
+        expect(res.statusCode).toBe(404);
+    });
+
     afterAll(async () => {
         await mongoose.connection.db.dropDatabase();
         await mongoose.disconnect();

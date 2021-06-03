@@ -1,8 +1,9 @@
-import { Request, Response } from "express";
+import { Request, Response } from 'express';
 import User from 'models/user';
 import * as yup from 'yup';
-import { ValidationError } from "yup";
+import { ValidationError } from 'yup';
 import { Types } from 'mongoose';
+import AppError from 'errors/AppError';
 
 
 export default {
@@ -14,7 +15,9 @@ export default {
 
     find: async (req: Request, res: Response) => {
         const { user_id } = req.params;
+
         validateIdType(user_id);
+        validateExistingUser(user_id);
 
         const user = await User.findOne({ _id: user_id });
         res.status(200).json(user);
@@ -48,6 +51,7 @@ export default {
 
         validateIdType(user_id);
         await schema.validate({ email, password });
+        await validateExistingUser(user_id);
         await validateNoExistingEmail(email);
 
         await User.updateOne({ _id: user_id }, { email, password });
@@ -77,4 +81,10 @@ async function validateNoExistingEmail(email: string) {
 function validateIdType(id: string) {
     if (!Types.ObjectId.isValid(id))
         throw new ValidationError('Invalid ID: should be 24 hex string');
+}
+
+async function validateExistingUser(id: string) {
+    const user = await User.findOne({ _id: id });
+    if (!user)
+        throw new AppError('User not found', 404);
 }
