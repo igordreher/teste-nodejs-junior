@@ -17,7 +17,7 @@ export default {
         const { user_id } = req.params;
 
         validateIdType(user_id);
-        validateExistingUser(user_id);
+        await validateExistingUser(user_id);
 
         const user = await User.findOne({ _id: user_id });
         res.status(200).json(user);
