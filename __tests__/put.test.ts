@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import request from 'supertest';
 import app from 'app';
 
-jest.mock('../src/mongo', () => {
+jest.mock('../src/services/mongo', () => {
     return () => {
         const db_url = process.env.DB_URL + 'put';
         mongoose.connect(db_url, { useNewUrlParser: true, useUnifiedTopology: true });

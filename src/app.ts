@@ -1,7 +1,7 @@
 require('dotenv');
 import express from 'express';
 import routes from 'routes';
-import connect from 'mongo';
+import connect from 'services/mongo';
 import errorHandler from 'errors/handler';
 
 connect();
