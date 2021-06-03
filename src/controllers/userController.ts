@@ -25,8 +25,10 @@ export default {
         });
 
         await schema.validate({ email, password });
-        const user = await User.create({ email, password });
-        res.status(201).json(user);
+        await findExistingEmail(email);
+
+        const newUser = await User.create({ email, password });
+        res.status(201).json(newUser);
     },
 
     update: async (req: Request, res: Response) => {
@@ -42,6 +44,8 @@ export default {
         });
 
         await schema.validate({ email, password });
+        await findExistingEmail(email);
+
         await User.updateOne({ _id: user_id }, { email, password });
         res.status(204).json();
     },
@@ -58,3 +62,9 @@ export default {
         res.status(200).json();
     },
 };
+
+async function findExistingEmail(email: string) {
+    const user = await User.findOne({ email });
+    if (user)
+        throw new ValidationError('Invalid email: already used');
+}

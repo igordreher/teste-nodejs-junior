@@ -32,6 +32,12 @@ describe('User Post', () => {
         expect(res.statusCode).toBe(400);
     });
 
+    it('Should fail to create user with existing email', async () => {
+        const res = await post({ email: 'user@email.com', password: 'pas' });
+        expect(res.statusCode).toBe(400);
+        expect(res.body).toEqual(['Invalid email: already used']);
+    });
+
     afterAll(async () => {
         await mongoose.connection.db.dropDatabase();
         await mongoose.disconnect();

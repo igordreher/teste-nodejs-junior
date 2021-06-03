@@ -18,7 +18,13 @@ describe('User Put', () => {
             email: 'user@email.com',
             password: 'password'
         };
+        const user2 = {
+            email: 'user2@email.com',
+            password: 'pass'
+        };
+
         seedUser = await User.create(user);
+        await User.create(user2);
     });
 
     const put = async (id: string, data: any) => {
@@ -36,6 +42,13 @@ describe('User Put', () => {
     it('Should fail to update user without any data', async () => {
         const res = await put(seedUser._id, {});
         expect(res.statusCode).toBe(400);
+    });
+
+    it('Should fail to update user email to existing one', async () => {
+        const res = await put(seedUser._id, { email: 'user2@email.com' });
+
+        expect(res.statusCode).toBe(400);
+        expect(res.body).toEqual(['Invalid email: already used']);
     });
 
     afterAll(async () => {
