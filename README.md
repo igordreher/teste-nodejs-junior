@@ -19,7 +19,7 @@ Run the project in docker containers:
 docker-compose up
 ```  
 
-Now you can access the endpoints at 
+Now you can access the [endpoints](/doc/endpoints.md) at 
 [localhost](http://localhost:3000/) 
    
 To run test:

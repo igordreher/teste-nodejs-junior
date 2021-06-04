@@ -23,7 +23,7 @@ Status: 200 OK
     "email": "user@email.com",
     "password": "userPassword"
 }
-...]
+]
 ```
 
 
