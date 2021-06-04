@@ -25,7 +25,7 @@ describe('User Delete', () => {
 
     it('Should delete a user', async () => {
         let res = await request(app).del('/api/v1/users/' + seedUser._id);
-        expect(res.statusCode).toBe(200);
+        expect(res.statusCode).toBe(204);
 
         const user = await User.findOne({ _id: seedUser._id });
         expect(user).toBeNull();
@@ -33,15 +33,15 @@ describe('User Delete', () => {
 
     it('Should delete all users', async () => {
         let res = await request(app).del('/api/v1/users');
-        expect(res.statusCode).toBe(200);
+        expect(res.statusCode).toBe(204);
 
         const users = await User.find();
         expect(users.length).toBe(0);
     });
 
-    it('Should still return 200 after deleting', async () => {
+    it('Should be idempotent', async () => {
         let res = await request(app).del('/api/v1/users/' + seedUser._id);
-        expect(res.statusCode).toBe(200);
+        expect(res.statusCode).toBe(204);
     });
 
     it('Should return 400 to invalid id', async () => {
