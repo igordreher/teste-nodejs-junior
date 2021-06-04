@@ -57,12 +57,12 @@ export default {
         validateIdType(user_id);
 
         await User.deleteOne({ _id: user_id });
-        res.status(200).json();
+        res.status(204).json();
     },
 
     deleteAll: async (req: Request, res: Response) => {
         await User.deleteMany();
-        res.status(200).json();
+        res.status(204).json();
     },
 };
 
